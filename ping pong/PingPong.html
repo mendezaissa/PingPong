@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ping | Pong</title>
+	<link rel="stylesheet" type="text/css" href="PingPong.css"> 
+	<!-- <script src="PingPong2.js"> </script> -->
+</head>
+
+<body>
+
+<h1> Ping Pong Game</h1>
+
+<canvas id="myCanvas" width="1000" height="550"></canvas>
+
+<script>
+// X and Y are the positions of the shapes
+// the width and height are the characteristics (how the shapes look) of the shapes
+
+	function startGame()
+	{
+		var start = document.getElementById("startButton");
+		start.remove();
+
+		remakeLeftBar(cLeftX, cLeftY, width, height); //draws left bar
+		remakeRightBar(cRightX, cRightY, width, height); //draws right bar
+		remakeBall(xPos, yPos, r, sAngle, eAngle); //draws ping pong ball
+		setInterval(moveCircle, 5);
+	}
+
+		var canvas = document.getElementById("myCanvas");
+		//the left bar
+		var cLeft = canvas.getContext("2d");
+		var cLeftX = 50;
+		var cLeftY = 100;
+		
+		// width and height stay the same for both bars
+		var width = 10;
+		var height = 200;
+
+		//the right bar
+		var cRight = canvas.getContext("2d");
+		var cRightX = 930;
+		var cRightY = 100;
+
+		//the circle
+		var ball = canvas.getContext("2d");
+		var xPos = 500;
+		var yPos = 220;
+		var r = 10;
+		var sAngle = 0;
+		var eAngle = 2 * Math.PI;
+
+		//the variables for the ball
+		var leftAndRight = 1;
+		var upAndDown = -1;
+
+		//second draw circle
+		function moveCircle()
+		{
+			xPos += leftAndRight;
+			yPos += upAndDown;
+			ball.clearRect(0,0, canvas.width, canvas.height);
+			remakeBall(xPos, yPos, r, sAngle, eAngle);
+			remakeLeftBar(cLeftX, cLeftY, width, height);
+			remakeRightBar(cRightX, cRightY, width, height);
+
+			//checks where the ball is located at
+			if(xPos >= 501)
+			{
+				collisionRight();
+			}
+
+			if(xPos < 500)
+			{
+				collisionLeft();
+			}
+
+			//if ball touches top increase upAndDown by 1
+			if(yPos < 0)
+			{
+				upAndDown += 1;
+			}
+
+			//if ball touches bottom decrease upAndDown by 1
+			if(yPos == 545)
+			{
+				upAndDown -= 1;
+			}
+
+			//if ball touches far right you lose
+			if(xPos == 995)
+			{
+				//you lose
+				alert("YOU LOSE!");
+				restartGame();
+			}
+
+			//if the ball touches too far to the left, you lose
+			if (xPos == 4)
+			{
+				//you lose
+				alert("YOU LOSE!");
+				restartGame();
+			}
+		}
+
+		function collisionRight()
+		{
+			//temporary variables to set edges for testing
+			var testX = xPos; 
+			var testY = yPos;
+
+			//which edge is closest?
+			//This is right bar collision
+			if(xPos < cRightX)
+			{
+				testX = cRightX;
+			}
+			else if(xPos > cRightX + width)
+			{
+				testX = cRightX + width;
+			}
+			if(yPos < cRightY)
+			{
+				testY = cRightY;
+			}
+			else if(yPos > cRightY + height)
+			{
+				testY = cRightY + height;
+			}
+			/*
+			else if(xPos == cRightX + width)
+			{
+				testX = cRightX + width;
+			}
+
+			else if(yPos == cRightY + height)
+			{
+				testY = cRightY + height;
+			}
+			*/
+			//get distance from closest edges
+			var distX = xPos - testX;
+			var distY = yPos - testY;
+			var distance = Math.sqrt( (distX*distX) + (distY*distY) );
+
+			//if the distance is less than the radius, then its a collision
+			if(distance <= r)
+			{
+				leftAndRight -= 1;
+				//alert("collision");
+			}
+		}
+
+		function collisionLeft()
+		{
+			//temporary variables to set edges for testing
+			var testX = xPos; 
+			var testY = yPos;
+
+			//which edge is closest?
+			//This is right bar collision
+			if(xPos < cLeftX)
+			{
+				testX = cLeftX;
+			}
+			else if(xPos > cLeftX + width)
+			{
+				testX = cLeftX + width;
+			}
+			if(yPos < cLeftY)
+			{
+				testY = cLeftY;
+			}
+			else if(yPos > cLeftY + height)
+			{
+				testY = cLeftY + height;
+			}
+
+			//get distance from closest edges
+			var distX = xPos - testX;
+			var distY = yPos - testY;
+			var distance = Math.sqrt( (distX*distX) + (distY*distY) );
+
+			//if the distance is less than the radius, then its a collision
+			if(distance <= r)
+			{
+				leftAndRight = leftAndRight + 1;
+				//alert("collision");
+			}
+		}
+
+		function remakeLeftBar(cLeftX, cLeftY, width, height)
+		{
+			cLeft.fillStyle = "white";
+			cLeft.fillRect(cLeftX, cLeftY, width, height);
+		}
+
+		function remakeRightBar(cRightX, cRightY, width, height)
+		{
+			cRight.fillStyle = "white";
+			cRight.fillRect(cRightX, cRightY, width, height);
+		}
+
+		function remakeBall(xPos, yPos, r, sAngle, eAngle)
+		{
+			ball.beginPath();
+			ball.arc(xPos, yPos, r, sAngle, eAngle);
+			ball.fillStyle = "white";
+			ball.fill();
+			ball.strokeStyle = "red";
+			ball.stroke();
+			ball.closePath();
+		}
+
+		function restartGame()
+		{
+			location.reload();
+		}
+
+	//document.addEventListener("keypress", )
+	window.onkeydown = function(event)
+	{
+		var pressed = event.keyCode;
+			
+		if (pressed === 38 && cLeftY > 0)
+		{
+			cLeftY = cLeftY - 10;
+			cRightY = cRightY - 10;
+		}
+
+		else if (pressed === 40 && cLeftY <= 345)
+		{
+			cLeftY = cLeftY + 10;
+			cRightY = cRightY + 10;
+		}
+
+		cLeft.clearRect(0, 0, 1000, 550);
+		cRight.clearRect(0, 0, 1000, 550);
+
+		remakeLeftBar(cLeftX, cLeftY, width, height);
+		remakeBall(xPos, yPos, r, sAngle, eAngle);
+		remakeRightBar(cRightX, cRightY, width, height);
+	}
+
+</script>
+
+<button id="startButton" onclick="startGame()">Start Game </button>
+
+</body>
+</html>

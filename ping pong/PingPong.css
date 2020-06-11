@@ -1,0 +1,33 @@
+body {
+	background-color: red;
+}
+
+h1 {
+	position: relative;
+	left: 600px;
+}
+
+#startButton {
+	position: relative;
+	top: 40px;
+	right: 300px;
+	border: 10px solid black;
+	background: rgb(0,0,0);
+  	color: white;
+  	transition: 0.3s;
+}
+
+#startButton:hover {
+	cursor: pointer;
+	background-color: green;
+	color: white;
+}
+
+#myCanvas {
+	color: white;
+	border : 5px solid #000000;
+	position: relative;
+	left: 210px;
+
+}
+
